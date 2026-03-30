@@ -20,13 +20,8 @@ def create():
 @app.route('/add_task/<int:list_id>', methods=['POST'])
 def add_task(list_id):
     task_text = request.form['task']
-<<<<<<< HEAD
     if task_text.strip() != " ":
         checklists[list_id].append(task_text) # Adiciona uma tarefa dentro da checklist(Precisa ter um nome)
-=======
-    if task_text.strip() != "":
-        checklists[list_id].append(task_text) 
->>>>>>> 6fc4cf0 (creating features to meta page)
     return redirect('/')
 
 @app.route("/delete_task/<int:list_id>/<int:task_id>")
@@ -36,12 +31,7 @@ def delete_task(list_id, task_id):
 
 # --- SEÇÃO DE METAS ---
 
-<<<<<<< HEAD
 @app.route('/meta')
-=======
-
-@app.route('/page_meta')
->>>>>>> 6fc4cf0 (creating features to meta page)
 def page_meta():
     return render_template('meta.html', metas=metas)
 
