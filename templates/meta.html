@@ -17,12 +17,25 @@
     </a>
 <hr>
     {% for meta in metas%}
-    {% set meta_id = loop_index0%}
+    {% set meta_id = loop.index0 %}
     <div class="container_meta">
         <h3>Meta {{loop.index}}</h3>
-        <form action="/add_task_meta/{{ list_meta_id}}">
-
+        <form action="/add_task_meta/{{ loop.index0 }}" method="POST">
+            <input type="text" name="task_meta" placeholder="Nova tarefa" required>
+            <button type="submit">Adicionar tarefa</button>
         </form>
+        <ul>
+            {% for task_meta in meta %}
+            <li>
+                    <input type="checkbox">{{ task_meta }}
+
+            <a href="/delete_task_meta/{{ meta_id }}/{{ loop.index0 }}">
+                <button>Deletar</button>
+            </a>
+            </li>
+            {% endfor %}
+
+        </ul>
     </div>
     {% endfor %}
    
