@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -11,14 +11,14 @@
 
 <body>
     <h1 class="title_P">Main page !!!</h1>
-    <a href="/meta">Ir para metas</a>
+    <a href="/page_meta">Ir para metas</a>
     <a href="/create_checklist">
         <button>Criar nova checklist</button>
     </a>
     <hr>
     {% for checklist in checklists %}
     {% set checklist_id = loop.index0 %}
-    <div style="border:1px black solid; padding:10px; margin:10px;">
+    <div class="container">
         <h3>Checklist {{ loop.index }}</h3>
         <form action="/add_task/{{ checklist_id }}" method="POST">
             <input type="text" name="task" placeholder="Nova tarefa" required>

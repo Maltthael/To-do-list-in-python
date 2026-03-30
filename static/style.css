@@ -3,7 +3,7 @@
 }
 
 
-.container_meta{
+.container{
     border: 1px black solid;
     background-color: pink;
     border-radius: 15px;
@@ -12,6 +12,6 @@
 }
 
 
-.page_meta{
+body{
     background-color: #FFFB9E
 }

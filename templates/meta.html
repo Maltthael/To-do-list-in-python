@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../static/style.css">
 
 </head>
-<body class="page_meta">
+<body >
     <h1>Pagina de metas</h1>
     <a href="/">
         <button>Voltar para pagina de checklist</button>
@@ -16,9 +16,10 @@
         <button> Criar meta</button>
     </a>
 <hr>
+<button>Salvar</button>
     {% for meta in metas%}
     {% set meta_id = loop.index0 %}
-    <div class="container_meta">
+    <div class="container">
         <h3>Meta {{loop.index}}</h3>
         <form action="/add_task_meta/{{ loop.index0 }}" method="POST">
             <input type="text" name="task_meta" placeholder="Nova tarefa" required>
