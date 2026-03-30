@@ -1,0 +1,18 @@
+.title_P{
+    color: red;
+}
+
+
+
+.container_meta{
+    border: 1px black solid;
+    background-color: pink;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 10px;
+}
+
+
+.page_meta{
+    background-color: #FFFB9E
+}

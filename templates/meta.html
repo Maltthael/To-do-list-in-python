@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/style.css">
+
+</head>
+<body class="page_meta">
+    <h1>Pagina de metas</h1>
+    <a href="/">
+        <button>Voltar para pagina de checklist</button>
+    </a>
+    <a href="/create_meta">
+        <button> Criar meta</button>
+    </a>
+<hr>
+    {% for meta in metas%}
+    {% set meta_id = loop_index0%}
+    <div class="container_meta">
+        <h3>Meta {{loop.index}}</h3>
+        <form action="/add_task_meta/{{ list_meta_id}}">
+
+        </form>
+    </div>
+    {% endfor %}
+   
+</body>
+</html>

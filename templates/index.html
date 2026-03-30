@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/style.css">
+
+</head>
+
+<body>
+    <h1 class="title_P">Main page !!!</h1>
+    <a href="/meta">Ir para metas</a>
+    <a href="/create_checklist">
+        <button>Criar nova checklist</button>
+    </a>
+    <hr>
+    {% for checklist in checklists %}
+    {% set checklist_id = loop.index0 %}
+    <div style="border:1px black solid; padding:10px; margin:10px;">
+        <h3>Checklist {{ loop.index }}</h3>
+        <form action="/add_task/{{ checklist_id }}" method="POST">
+            <input type="text" name="task" placeholder="Nova tarefa" required>
+            <button type="submit">Adicionar tarefa</button>
+        </form>
+        <ul>
+            {% for task in checklist %}
+            <li>
+                <input type="checkbox">{{ task }}
+
+            <a href="/delete_task/{{ checklist_id }}/{{ loop.index0 }}">
+                <button>Deletar</button>
+            </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% endfor %}
+</body>
+
+</html>
