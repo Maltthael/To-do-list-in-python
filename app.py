@@ -53,8 +53,19 @@ def home():
     cursor = conn.cursor()
     cursor.execute("SELECT id, titulo FROM Checklists")
     todos_os_checklists = cursor.fetchall()
+    checklist_com_tarefas = []
+    for checklist in todos_os_checklists:
+        checklist_id = checklist[0]
+        cursor.execute("SELECT conteudo FROM Tarefas_checklist WHERE checklist_id = ?", (checklist_id,))
+        tarefas_da_checklist = cursor.fetchall()
+        pacote ={
+            'id': checklist[0],
+            'titulo': checklist[1],
+            'tarefas': tarefas_da_checklist
+        }
+        checklist_com_tarefas.append(pacote)
     conn.close()
-    return render_template('index.html', checklists=todos_os_checklists)
+    return render_template('index.html', checklists=checklist_com_tarefas)
 
 @app.route('/create_checklist', methods=['POST'])
 def create():
