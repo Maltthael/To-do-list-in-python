@@ -99,7 +99,7 @@ def delete_task(id):
     conn.close()
     return redirect("/")
 
-# --- SEÇÃO DE METAS ---
+# --------------------------------------------------- META SECSION ------------------------------------------------------------
 
 @app.route('/page_meta')
 def page_meta():

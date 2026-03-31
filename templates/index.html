@@ -36,7 +36,7 @@
             {% for task in checklist.tarefas %}
             <li>
                 <input type="checkbox"> {{ task[0] }}
-                <a href="/delete_task/{{ checklist.id }}/{{ loop.index0 }}">
+                <a href="/delete_task/{{ checklist.id }} ">
                     <button type="button">Deletar</button>
                 </a>
             </li>
