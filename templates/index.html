@@ -12,26 +12,30 @@
 <body>
     <h1 class="title_P">Main page !!!</h1>
     <a href="/page_meta">Ir para metas</a>
-    <a href="/create_checklist">
-        <button>Criar nova checklist</button>
-    </a>
+    
+    #creates the checklist with the title that user typed
+        <form action="/create_checklist" method="POST">
+            <input type="text" name="titulo" placeholder="Digite o titulo da checklist" required>
+            <button>Criar nova checklist</button>
+        </form>
+
     <hr>
     {% for checklist in checklists %}
     {% set checklist_id = loop.index0 %}
     <div class="container">
         <h3>Checklist {{ loop.index }}</h3>
         <form action="/add_task/{{ checklist_id }}" method="POST">
-            <input type="text" name="task" placeholder="Nova tarefa" required>
-            <button type="submit">Adicionar tarefa</button>
+            <input type="text" name="task" placeholder="Digite a tarefa" required>
+            <button type="submit">Adicionar</button>
         </form>
         <ul>
             {% for task in checklist %}
             <li>
                 <input type="checkbox">{{ task }}
 
-            <a href="/delete_task/{{ checklist_id }}/{{ loop.index0 }}">
-                <button>Deletar</button>
-            </a>
+                <a href="/delete_task/{{ checklist_id }}/{{ loop.index0 }}">
+                    <button>Deletar</button>
+                </a>
             </li>
             {% endfor %}
         </ul>

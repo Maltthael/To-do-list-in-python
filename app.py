@@ -1,38 +1,91 @@
 from flask import Flask, render_template, redirect, request
 from markupsafe import escape
+import sqlite3
+import os
 
+def connect_db():
+    #in case if the file doesn't exists
+    file = 'database'
+    if not os.path.exists(file):
+        os.makedirs(file)
+    
+    path_db = os.path.join('database', 'to_do.db')
+    conn = sqlite3.connect(path_db)
+    return conn
 
+def create_table():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS Checklists (
+                       id integer PRIMARY KEY AUTOINCREMENT,
+                       titulo TEXT NOT NULL
+                   )
+                   """)
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS Metas(
+                       id integer PRIMARY KEY AUTOINCREMENT,
+                       conteudo TEXT NOT NULL
+                       )
+                   """)
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS Tarefas_checklist(
+                       id integer PRIMARY KEY AUTOINCREMENT,
+                       checklist_id INTEGER,
+                       conteudo TEXT NOT NULL,
+                       concluido INTEGER DEFAULT 0,
+                       FOREIGN KEY (checklist_id) REFERENCES Checklists(id) ON DELETE CASCADE   
+                   ) 
+                   """)
+    conn.commit()
+    conn.close()
+create_table()
 
 
 app = Flask(__name__)
 
-# Listas globais para armazenar os dados
-checklists = []
-metas = []
+
+
 
 @app.route('/')
 def home():
-    return render_template('index.html', checklists=checklists)
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, titulo FROM Checklists")
+    todos_os_checklists = cursor.fetchall()
+    conn.close()
+    return render_template('index.html', checklists=todos_os_checklists)
 
-@app.route('/create_checklist')
+@app.route('/create_checklist', methods=['POST'])
 def create():
-    new_checklist = []
-    checklists.append(new_checklist) # cria uma checklist vazia
-
+    titulo = request.form.get('titulo')
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Checklists (titulo) VALUES (?)", (titulo,))
+    conn.commit()
+    conn.close()
     return redirect('/')
 
-@app.route('/add_task/<int:list_id>', methods=['POST'])
-def add_task(list_id):
+
+@app.route('/add_task/<int:checklist_id>', methods=['POST'])
+def add_task(checklist_id):
     task_text = request.form['task']
-    if task_text.strip() != " ":
-        checklists[list_id].append(task_text) # Adiciona uma tarefa dentro da checklist(Precisa ter um nome)
-
+    if task_text.strip():
+        conn = connect_db()
+        cursor = conn.cursor()
+        #insert the text in the column 'conteudo'
+        cursor.execute("INSERT INTO Tarefas_checklist (checklist_id, conteudo) VALUES (?, ?)", (checklist_id, task_text,))
+        conn.commit()
+        conn.close()
     return redirect('/')
 
-@app.route("/delete_task/<int:list_id>/<int:task_id>")
-def delete_task(list_id, task_id):
-    checklists[list_id].pop(task_id)
-
+@app.route("/delete_task/<int:id>")
+def delete_task(id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Checklists WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
     return redirect("/")
 
 # --- SEÇÃO DE METAS ---
