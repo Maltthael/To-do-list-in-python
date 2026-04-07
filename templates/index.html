@@ -11,7 +11,12 @@
 
 <body>
     <h1 class="title_P">Main page !!!</h1>
-    <a href="/page_meta">Ir para metas</a>
+    <a href="/page_meta">
+        <button>
+            Ir para metas
+        </button>
+
+    </a>
 
     <!-- creates the checklist with the title that user typed -->
     <form action="/create_checklist" method="POST">
@@ -26,7 +31,7 @@
     <div class="container">
         <h3>{{ checklist.titulo }}</h3>
 
-    <!--Send the request to create a task in the respective checklist, using the checklist id to know what checklist is-->
+        <!--Send the request to create a task in the respective checklist, using the checklist id to know what checklist is-->
         <form action="/add_task/{{ checklist.id }}" method="POST">
             <input type="text" name="task" placeholder="Digite a tarefa" required>
             <button type="submit">Adicionar</button>
@@ -35,10 +40,11 @@
         <ul>
             {% for task in checklist.tarefas %}
             <li>
-                <input type="checkbox"> {{ task[0] }}
-                <a href="/delete_task/{{ checklist.id }} ">
-                    <button type="button">Deletar</button>
-                </a>
+                <input type="checkbox"> {{ task[1] }}
+                <form action="{{ url_for('delete_task', id=task[0]) }} " method="POST">
+                    <button type="submit">Deletar</button>
+                </form>
+
             </li>
             {% endfor %}
         </ul>

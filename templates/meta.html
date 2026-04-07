@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,38 +8,44 @@
     <link rel="stylesheet" href="../static/style.css">
 
 </head>
-<body >
+
+<body>
     <h1>Pagina de metas</h1>
     <a href="/">
         <button>Voltar para pagina de checklist</button>
     </a>
-    <a href="/create_meta">
+    <form action="/create_meta" method="POST">
+        <input type="text" name="titulo_meta" placeholder="Digite o titulo da meta" required>
         <button> Criar meta</button>
-    </a>
-<hr>
-<button>Salvar</button>
+    </form>
+
+
+
+    <hr>
+    <button>Salvar</button>
     {% for meta in metas%}
-    {% set meta_id = loop.index0 %}
     <div class="container">
-        <h3>Meta {{loop.index}}</h3>
-        <form action="/add_task_meta/{{ loop.index0 }}" method="POST">
-            <input type="text" name="task_meta" placeholder="Nova tarefa" required>
+        <h3>{{ meta.titulo }}</h3>
+        <form action="/add_task_meta/{{ meta.id }}" method="POST">
+            <input type="text" name="task_meta" placeholder="Digite nova tarefa" required>
             <button type="submit">Adicionar tarefa</button>
         </form>
         <ul>
-            {% for task_meta in meta %}
+            {% for task_meta in meta.tarefas %}
             <li>
-                    <input type="checkbox">{{ task_meta }}
+                <input type="checkbox">{{ task_meta[1] }}
 
-            <a href="/delete_task_meta/{{ meta_id }}/{{ loop.index0 }}">
-                <button>Deletar</button>
-            </a>
+                <form action="{{ url_for('delete_task_meta', id=task_meta[0]) }}" method="POST">
+                    <button type="submit">Deletar</button>
+                </form>
+
             </li>
             {% endfor %}
 
         </ul>
-    </div>
-    {% endfor %}
-   
+    </div> {% endfor %}
+
+
 </body>
+
 </html>

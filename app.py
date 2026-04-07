@@ -25,16 +25,25 @@ def create_table():
     cursor.execute("""
                    CREATE TABLE IF NOT EXISTS Metas(
                        id integer PRIMARY KEY AUTOINCREMENT,
-                       conteudo TEXT NOT NULL
+                       titulo_meta TEXT NOT NULL
                        )
                    """)
     cursor.execute("""
                    CREATE TABLE IF NOT EXISTS Tarefas_checklist(
-                       id integer PRIMARY KEY AUTOINCREMENT,
+                       id_tarefa_check integer PRIMARY KEY AUTOINCREMENT,
                        checklist_id INTEGER,
                        conteudo TEXT NOT NULL,
                        concluido INTEGER DEFAULT 0,
                        FOREIGN KEY (checklist_id) REFERENCES Checklists(id) ON DELETE CASCADE   
+                   ) 
+                   """)
+    cursor.execute("""
+                   CREATE TABLE IF NOT EXISTS Tarefas_metas(
+                       id_tarefa_meta integer PRIMARY KEY AUTOINCREMENT,
+                       meta_id INTEGER,
+                       conteudo TEXT NOT NULL,
+                       concluido INTEGER DEFAULT 0,
+                       FOREIGN KEY (meta_id) REFERENCES Metas(id) ON DELETE CASCADE   
                    ) 
                    """)
     conn.commit()
@@ -56,7 +65,7 @@ def home():
     checklist_com_tarefas = []
     for checklist in todos_os_checklists:
         checklist_id = checklist[0]
-        cursor.execute("SELECT conteudo FROM Tarefas_checklist WHERE checklist_id = ?", (checklist_id,))
+        cursor.execute("SELECT id_tarefa_check, conteudo FROM Tarefas_checklist WHERE checklist_id = ?", (checklist_id,))
         tarefas_da_checklist = cursor.fetchall()
         pacote ={
             'id': checklist[0],
@@ -90,11 +99,11 @@ def add_task(checklist_id):
         conn.close()
     return redirect('/')
 
-@app.route("/delete_task/<int:id>")
+@app.route("/delete_task/<int:id>", methods=['POST'])
 def delete_task(id):
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM Checklists WHERE id = ?", (id,))
+    cursor.execute("DELETE FROM Tarefas_checklist WHERE id_tarefa_check = ?", (id,))
     conn.commit()
     conn.close()
     return redirect("/")
@@ -103,26 +112,56 @@ def delete_task(id):
 
 @app.route('/page_meta')
 def page_meta():
-    return render_template('meta.html', metas=metas)
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, titulo_meta from Metas")
+    todas_as_metas = cursor.fetchall()
+    metas_com_tarefas = []
+    for metas in todas_as_metas:
+        metas_id = metas[0]
+        cursor.execute("SELECT id_tarefa_meta, conteudo from Tarefas_metas WHERE meta_id = ?", (metas_id,))
+        tarefas_metas = cursor.fetchall()
+        pacote = {
+            'id': metas[0],
+            'titulo': metas[1],
+            'tarefas': tarefas_metas
+            
+        }
+        metas_com_tarefas.append(pacote)
+    
+    conn.close()
+        
+    return render_template('meta.html', metas = metas_com_tarefas, )
 
-@app.route('/create_meta')
+@app.route('/create_meta', methods=['POST'])
 def create_meta():
-    new_meta = []
-    metas.append(new_meta) # cria uma meta vazia
+    titulo_meta = request.form.get('titulo_meta')
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Metas (titulo_meta) VALUES (?)", (titulo_meta,))
+    conn.commit()
+    conn.close()
     return redirect('/page_meta')
 
 @app.route('/add_task_meta/<int:meta_id>', methods=['POST'])
 def add_task_meta(meta_id):
-    task_text = request.form['task_meta']
-    if task_text.strip() != "":
-        metas[meta_id].append(task_text)
+    task_meta_text = request.form['task_meta']
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Tarefas_metas (meta_id, conteudo) VALUES (?, ?)", (meta_id, task_meta_text))
+    conn.commit()
+    conn.close()
 
     return redirect('/page_meta')
 
 
-@app.route('/delete_task_meta/<int:meta_id>/<int:task_meta_id>')
-def delete_task_meta(meta_id, task_meta_id):
-    metas[meta_id].pop(task_meta_id)
+@app.route('/delete_task_meta/<int:id>', methods=['POST'])
+def delete_task_meta(id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Tarefas_metas WHERE id_tarefa_meta = ? ", (id,))
+    conn.commit()
+    conn.close()
 
     return redirect('/page_meta')
 
